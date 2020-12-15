@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+    <title>.Style Signin</title>
+    <link href="https://fonts.googleapis.com/css?family=Kosugi+Maru%7CNanum+Gothic+Coding%7CSawarabi+Gothic&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Crimson+Pro%7CM+PLUS+Rounded+1c%7CSawarabi+Mincho&display=swap" rel="stylesheet">
+    <style>h1{text-align: center;}</style>
+</head>
+<style>
+    body {
+        text-align:center;
+    }
+</style>
+<body>
+    <h1 style="color:#333333; font-family: 'Noto Sans JP', sans-serif;">Signin</h1>
+    <div id="firebaseui-auth-container"></div>
+    <input type="email" id="email">
+    <input type="password" id="password">
+    <button onclick="createUser()">ユーザー作成</button>
+    <button onclick="login()">ログイン</button>
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-auth.js"></script>
+    <script>
+        var user_id = "";
+        var user_email = "";
+        var config = {
+            apiKey: "AIzaSyAIZ-_BTayJqXwn1ku3qE_ToH4omWUF9PI",
+            authDomain: "luxa-app-1132.firebaseapp.com"
+        }
+        firebase.initializeApp(config);
+        var auth = firebase.auth();
+
+        function createUser() {
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            auth.createUserWithEmailAndPassword(email, password).then(function() {
+                var uid = auth.currentUser.uid;
+                writeUserData(uid, "hoge", email);
+            }).catch(function(error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorMessage);
+            });
+        }
+
+        function login() {
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            auth.signInWithEmailAndPassword(email, password).then(function() {
+                var uid = auth.currentUser.uid;
+                console.log("login successed");
+                location.href = 'mypage.html';
+            }).catch(function(error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorCode + " : " + errorMessage);
+            });
+        }
+
+
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+            hd: 'au-cl.co,jp'
+        });
+
+    </script>
+</body>
+</html>

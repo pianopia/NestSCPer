@@ -1,1 +1,7 @@
 node_modules
+.DS_Store
+electron-darwin-x64
+lxdevtool_win-win32-x64
+lxdevtool_win-win32-x64.zip
+lxdevtools-darwin-x64
+lxdevtools-darwin-x64.zip

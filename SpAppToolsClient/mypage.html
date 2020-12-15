@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+    <title>auCL開発ツール v1.0.0</title>
+    <!--<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />-->
+    <link href="https://fonts.googleapis.com/css?family=Kosugi+Maru%7CNanum+Gothic+Coding%7CSawarabi+Gothic&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Crimson+Pro%7CM+PLUS+Rounded+1c%7CSawarabi+Mincho&display=swap" rel="stylesheet">
+    <style>h1{text-align: center;}</style>
+</head>
+<style>
+    body {
+        text-align:center;
+    }
+
+    .fire_image {
+        width: 100px;
+        float: left;
+        margin: 10px;
+    }
+</style>
+<body>
+    <h1 style="color:#333333; font-family: 'Noto Sans JP', sans-serif;">アップロード画像一覧</h1>
+    <div id="image_list"></div>
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
+    <script>
+        var user_id = "";
+        var user_email = "";
+        var config = {
+            apiKey: "AIzaSyAIZ-_BTayJqXwn1ku3qE_ToH4omWUF9PI",
+            authDomain: "luxa-app-1132.firebaseapp.com",
+            storageBucket: 'gs://luxa-app-1132.appspot.com'
+        }
+        firebase.initializeApp(config);
+
+        var storage = firebase.storage();
+        var storageRef = storage.ref();
+
+        var listRef = storageRef.child('images');
+
+        // Find all the prefixes and items.
+        listRef.listAll().then(function(res) {
+            //res.prefixes.forEach(function(folderRef) {
+            //    console.log(folderRef);
+            //});
+            res.items.forEach(function(itemRef) {
+                console.log(itemRef);
+                itemRef.getDownloadURL().then(function(url) {
+                    document.getElementById("image_list").insertAdjacentHTML('beforeend', '<a href="' + url + '" download><image src="' + url + '" class="fire_image"></a>');
+                }).catch(function(error) {
+
+                });
+            });
+        }).catch(function(error) {
+            console.log(error.message);
+        });
+
+        let request = require('request');
+
+        request(url, {
+            encoding: 'binary'
+        }, (error, response, body) => {
+            if (!error) {
+                let remote = require('remote');
+
+                let lastSavePath = window.localStorage.getItem('lastSavePath') || '';
+
+                remote.require('dialog').showSaveDialog({
+                    defaultPath: lastSavePath + filename,
+                    title: 'Download File',
+                    filters: [{
+                        name: "File",
+                        extensions: [filename.split('.').pop()]
+                    }]
+                }, (filePath) => {
+
+                    if (filePath) {
+                        let fs = require('fs');
+
+                        let savedFileName = filePath.split('/').pop();
+                        window.localStorage.setItem('lastSavePath', filePath.replace(savedFileName, ''));
+                        fs.writeFile(filePath, body, 'binary', (err) => {});
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
